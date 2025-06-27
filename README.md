@@ -1,0 +1,1 @@
+A small project for applying python skills :)
