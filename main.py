@@ -1,5 +1,12 @@
 from Task import Task
 import json
+import logging
+
+logging.basicConfig(
+    filename='error.log',
+    level=logging.WARNING,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 tasks = []
 
@@ -18,6 +25,21 @@ def load_tasks():
     except FileNotFoundError:
         with open('tasks.json', 'w') as file:
             json.dump([], file, indent=4)
+    except json.JSONDecodeError as e:
+        logging.error('Corrupted JSON file: %s', str(e))
+        while True:
+            var = input(
+                'Error: tasks.json is corrupted. Would you like to delete it? [y/n]: ')
+            if var == 'y':
+                with open('tasks.json', 'w') as file:
+                    json.dump([], file, indent=4)
+                break
+            elif var == 'n':
+                print('Please fix the file.')
+                exit()
+            else:
+                print('Please enter a valid answer.')
+                continue
 
 
 def add_task(title: str, description: str, due_date: str):
@@ -26,22 +48,28 @@ def add_task(title: str, description: str, due_date: str):
     save_tasks()
 
 
-def delete_task(task_id):
-    if 1 <= task_id <= len(tasks):
-        tasks.pop(task_id-1)
+def delete_task(task_num):
+    task_id = task_num - 1
+    if 0 <= task_id < len(tasks):
+        tasks.pop(task_id)
         save_tasks()
         print(
             '==========================\nTask deleted successfully.\n==========================\n')
     else:
+        logging.warning(
+            f"User tried to access task #{task_num}, but it doesn't exits")
         print('\nInvalid task number.\n')
 
 
-def mark_complete(task_id):
-    if 1 <= task_id <= len(tasks):
-        tasks[task_id-1].completed = True
+def mark_complete(task_num):
+    task_id = task_num - 1
+    if 0 <= task_id < len(tasks):
+        tasks[task_id].completed = True
         save_tasks()
         print('=========================\nTask marked successfully.\n=========================\n')
     else:
+        logging.warning(
+            f"User tried to access task #{task_num}, but it doesn't exits")
         print('\nInvalid task number.\n')
 
 
@@ -80,20 +108,20 @@ def main():
 
         elif action == '2':
             try:
-                task_id = int(input('Enter task number to mark: '))
-                mark_complete(task_id)
+                task_num = int(input('Enter task number to mark: '))
+                mark_complete(task_num)
             except ValueError:
                 print('\nPlease Enter a digit.\n')
         elif action == '3':
             try:
-                task_id = int(input('Enter task number to delete: '))
-                delete_task(task_id)
+                task_num = int(input('Enter task number to delete: '))
+                delete_task(task_num)
             except ValueError:
                 print('\nPlease Enter a digit.\n')
         elif action == '0':
             break
         else:
-            print('\n(((Please provide a valid operation number.)))\n')
+            print('\nPlease provide a valid operation number.\n')
             continue
 
 
