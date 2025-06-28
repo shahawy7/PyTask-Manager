@@ -1,3 +1,4 @@
 2025-06-28 13:07:24,249 - ERROR - Corrupted JSON file: Expecting property name enclosed in double quotes: line 6 column 9 (char 130)
 2025-06-28 13:13:14,841 - ERROR - Corrupted JSON file: Expecting ',' delimiter: line 8 column 9 (char 161)
 2025-06-28 13:14:14,202 - WARNING - User tried to access task #1234, but it doesn't exits
+2025-06-28 13:25:20,594 - WARNING - User tried to access task #45, but it doesn't exits
