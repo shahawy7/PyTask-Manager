@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Buy groceries",
+        "description": "Milk, Egg, Vegetable",
+        "due_date": "28-6-2025",
+        "completed": true
+    },
+    {
+        "title": "Call Family",
+        "description": "Brother, Mom",
+        "due_date": "28-6-2025",
+        "completed": false
+    }
+]

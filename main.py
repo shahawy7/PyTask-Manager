@@ -1,28 +1,37 @@
-class Task:
-    def __init__(self, title: str, description: str, due_date: str) -> None:
-        self.title = title
-        self.description = description
-        self.due_date = due_date
-        self.completed = False
-
-    def __str__(self) -> str:
-        status = '✓' if self.completed else '✗'
-        # return f'[{status}]\n{self.title} - due: {self.due_date}\nDescription: {self.description}'
-        return f"[{status}] {self.title} (Due: {self.due_date})\n    {self.description}"
-
+from Task import Task
+import json
 
 tasks = []
+
+
+def save_tasks():
+    with open('tasks.json', 'w') as file:
+        json.dump([task.to_dict() for task in tasks], file, indent=4)
+
+
+def load_tasks():
+    try:
+        with open('tasks.json', 'r') as file:
+            data = json.load(file)
+            for item in data:
+                tasks.append(Task.from_dict(item))
+    except FileNotFoundError:
+        with open('tasks.json', 'w') as file:
+            json.dump([], file, indent=4)
 
 
 def add_task(title: str, description: str, due_date: str):
     task = Task(title, description, due_date)
     tasks.append(task)
+    save_tasks()
 
 
 def delete_task(task_id):
     if 1 <= task_id <= len(tasks):
         tasks.pop(task_id-1)
-        print('\nTask deleted successfully.\n')
+        save_tasks()
+        print(
+            '==========================\nTask deleted successfully.\n==========================\n')
     else:
         print('\nInvalid task number.\n')
 
@@ -30,7 +39,8 @@ def delete_task(task_id):
 def mark_complete(task_id):
     if 1 <= task_id <= len(tasks):
         tasks[task_id-1].completed = True
-        print('\nTask marked successfully.\n')
+        save_tasks()
+        print('=========================\nTask marked successfully.\n=========================\n')
     else:
         print('\nInvalid task number.\n')
 
@@ -39,12 +49,13 @@ def view_tasks():
     print('=====TASKS=====')
     if not tasks:
         print('Empty')
-    for id, task in enumerate(tasks):
-        print(f'{id+1}: {task}')
+    else:
+        for id, task in enumerate(tasks):
+            print(f'{id+1}: {task}')
 
 
 def main():
-
+    load_tasks()
     while True:
         view_tasks()
         action = input(
@@ -66,6 +77,7 @@ def main():
                         continue
                 if add_another == 'n':
                     break
+
         elif action == '2':
             try:
                 task_id = int(input('Enter task number to mark: '))
